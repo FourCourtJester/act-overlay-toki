@@ -1,0 +1,21 @@
+# dependencies
+/node_modules
+
+# builds
+/dist
+/.turbo
+/.next
+/build
+/.cache
+
+# misc
+.env
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# vscode
+.vscode/*
+!.vscode/settings.json
