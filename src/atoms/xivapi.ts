@@ -3,10 +3,12 @@ import { api, atom, injectAtomInstance, injectPromise, injectStore } from '@zedu
 
 // Import our components
 import { overlayAtom } from './overlay'
-import { getAll, save } from '../utils/indexedDB'
+import { clearAll, getAll, save } from '../utils/indexedDB'
 
 // Import interfaces
 // ...
+
+const GAME_VERSION = import.meta.env.VITE_GAME_VERSION
 
 export const xivAPIAtom = atom('xivapi', () => {
   const overlay = injectAtomInstance(overlayAtom)
@@ -14,6 +16,14 @@ export const xivAPIAtom = atom('xivapi', () => {
 
   injectPromise(async () => {
     const cache = await getAll()
+    const v = { id: 'v', value: GAME_VERSION }
+
+    if (!cache.length) {
+      await save(v)
+    } else if (cache[cache.length - 1].value !== GAME_VERSION) {
+      await clearAll()
+      await save(v)
+    }
 
     store.setState(
       cache.reduce((acc, ability) => {

@@ -24,6 +24,32 @@ function getDb(): Promise<IDBDatabase> {
   return dbPromise
 }
 
+export async function clearAll() {
+  return new Promise<void>((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME)
+
+    request.onerror = () => {
+      reject(new Error('[Tōki] Failed to open IndexedDB'))
+    }
+
+    request.onsuccess = () => {
+      const db = request.result
+      const tx = db.transaction(STORE_NAME, 'readwrite')
+
+      tx.onerror = () => {
+        reject(new Error('[Tōki] Failed to clear store'))
+      }
+
+      tx.oncomplete = () => {
+        console.log(`[Tōki] Cleared store "${STORE_NAME}" in "${DB_NAME}"`)
+        resolve()
+      }
+
+      tx.objectStore(STORE_NAME).clear()
+    }
+  })
+}
+
 export async function get(id: number) {
   const db = await getDb()
   return new Promise((resolve, reject) => {

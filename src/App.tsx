@@ -1,8 +1,8 @@
 // Import components
-import { useAtomInstance, useAtomSelector } from '@zedux/react'
+// ...
 
 // Import our components
-import { activeCooldownsSelector, overlayAtom } from './atoms/overlay'
+import { Timeline } from './components/Timeline'
 
 // Import interfaces
 // ...
@@ -11,15 +11,11 @@ import { activeCooldownsSelector, overlayAtom } from './atoms/overlay'
 // ...
 
 function App() {
-  const overlay = useAtomInstance(overlayAtom)
-  const cooldowns = useAtomSelector(activeCooldownsSelector)
-
-  return cooldowns.map((cd) => (
-    <div key={cd.id}>
-      <img src={cd.icon} />
-      {cd.name} ({cd.remaining}s)
+  return (
+    <div className="flex items-center justify-center w-full h-full">
+      <Timeline />
     </div>
-  ))
+  )
 }
 
 export default App

@@ -12,6 +12,7 @@
   "dependencies": {
     "@zedux/core": "^1.3.4",
     "@zedux/react": "^1.3.4",
+    "classnames": "^2.5.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
