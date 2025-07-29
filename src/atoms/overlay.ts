@@ -40,10 +40,19 @@ export const overlayAtom = atom('Tōki', () => {
       }
     })
     .reduce(actionFactory('CombatState'), (state, payload) => {
-      // { inACTCombat, inGameCombat }
+      const { inACTCombat, inGameCombat } = payload
+      const prev = state.inCombat
+
+      if (prev && !inACTCombat)
+        return {
+          ...state,
+          inCombat: inACTCombat,
+          cds: {},
+        }
+
       return {
         ...state,
-        inCombat: payload.inACTCombat,
+        inCombat: inACTCombat,
       }
     })
 
@@ -55,33 +64,15 @@ export const overlayAtom = atom('Tōki', () => {
     })
   }, [])
 
-  // injectEffect(() => {
-  //   const interval = setInterval(
-  //     () => {
-  //       const state = store.getState()
-  //       const now = Date.now()
-
-  //       const updated = Object.fromEntries(
-  //         Object.entries(state.cds).map(([id, cd]) => {
-  //           const msRemaining = cd.recast * 1000 - (now - cd.ts)
-  //           const remaining = Math.ceil(msRemaining / 1000) // in seconds
-
-  //           return [id, { ...cd, remaining: remaining < 0 ? 0 : remaining }]
-  //         })
-  //       )
-
-  //       store.setState((prev) => ({
-  //         ...prev,
-  //         cds: updated,
-  //       }))
-  //     },
-  //     Number(import.meta.env.VITE_TICK_RATE)
-  //   )
-
-  //   return () => clearInterval(interval)
-  // })
-
   return api(store).setExports({
+    remove(id) {
+      store.setState((_state) => {
+        const cds = { ..._state.cds }
+        delete cds[id]
+
+        return { ..._state, cds }
+      })
+    },
     setRecast(ability) {
       const { id, recast } = ability
 

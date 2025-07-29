@@ -1,0 +1,36 @@
+{
+  "role": {
+    "Swiftcast": {
+      "level": 94,
+      "modification": -200
+    }
+  },
+  "class": {
+    "BLM": {
+      "Manafont": {
+        "level": 84,
+        "modification": -200
+      }
+    },
+    "SCH": {
+      "Deployment Tactics": {
+        "level": 88,
+        "modification": -300
+      },
+      "Recitation": {
+        "level": 98,
+        "modification": -300
+      }
+    },
+    "SGE": {
+      "Soteria": {
+        "level": 94,
+        "modification": -300
+      },
+      "Zoe": {
+        "level": 88,
+        "modification": -300
+      }
+    }
+  }
+}

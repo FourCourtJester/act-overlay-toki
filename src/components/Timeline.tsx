@@ -1,19 +1,25 @@
 // Import components
 import { useEffect, useState } from 'react'
-import { useAtomSelector } from '@zedux/react'
+import { useAtomInstance, useAtomSelector } from '@zedux/react'
 
 // Import our components
-import { activeCooldownsSelector } from '../atoms/overlay'
+import { activeCooldownsSelector, overlayAtom } from '../atoms/overlay'
 import { Icon } from './Icon'
 
 // Import interfaces
 // ...
 
 export const Timeline = () => {
+  const overlay = useAtomInstance(overlayAtom)
+
   const cds = useAtomSelector(activeCooldownsSelector)
+
   const [now, setNow] = useState(Date.now())
+  const isActive = cds.length > 0
 
   useEffect(() => {
+    if (!isActive) return () => {}
+
     let raf: number
     const loop = () => {
       setNow(Date.now())
@@ -21,15 +27,22 @@ export const Timeline = () => {
     }
     raf = requestAnimationFrame(loop)
     return () => cancelAnimationFrame(raf)
-  }, [])
+  }, [isActive])
+
+  if (!isActive) return null
 
   return (
-    <div className="inset-0 relative h-16 flex items-center w-full">
-      <div className="absolute h-0.5 top-1/2 left-0 w-full bg-white/20 -translate-y-1/2 rounded-full pointer-events-none" />
+    <div className="inset-0 relative w-full h-full flex items-center">
+      <div
+        className="absolute top-1/2 left-0 w-full bg-white/60 -translate-y-1/2 rounded-full pointer-events-none"
+        style={{
+          height: '2vh',
+        }}
+      />
 
-      {Object.values(cds).map((cd) => (
-        <Icon key={cd.id} cd={cd} now={now} />
-      ))}
+      {Object.values(cds).map(
+        (cd) => !Number.isNaN(cd.recast) && <Icon key={cd.id} cd={cd} now={now} atom={overlay} />
+      )}
     </div>
   )
 }
