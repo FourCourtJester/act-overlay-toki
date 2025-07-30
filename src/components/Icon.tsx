@@ -38,9 +38,10 @@ export const Icon = ({ atom, cd, now }) => {
   return (
     <div
       ref={$ref}
-      className="absolute aspect-square h-full p-1 will-change-transform"
+      className="absolute aspect-square p-1 will-change-transform"
       style={{
-        transform: `translateX(${distance}px)`,
+        height: '48%',
+        transform: `translate(${distance}px, ${cd.position === 'above' ? '-52%' : '52%'})`,
       }}
     >
       <img
@@ -59,7 +60,7 @@ export const Icon = ({ atom, cd, now }) => {
         <span
           className="absolute inset-0 flex items-center justify-center text-white font-bold shadow-text"
           style={{
-            fontSize: '35vh',
+            fontSize: '25vh',
           }}
         >
           {Math.ceil(remaining)}

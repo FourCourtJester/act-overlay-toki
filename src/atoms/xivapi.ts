@@ -49,6 +49,7 @@ export const xivAPIAtom = atom('xivapi', () => {
 
         const json = await response.json()
         const ability = {
+          charges: json?.MaxCharges ?? 1,
           id: json.ID,
           name: json.Name,
           icon: `https://xivapi.com${json.IconHD}`,
@@ -65,7 +66,10 @@ export const xivAPIAtom = atom('xivapi', () => {
 
         return ability
       } catch (err) {
+        overlay.exports.remove(id)
+
         console.error(err)
+
         return undefined
       }
     },

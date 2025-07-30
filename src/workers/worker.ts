@@ -16,7 +16,12 @@ function connect() {
   ws.addEventListener('open', () => {
     retryCount = 0
 
-    ws?.send(JSON.stringify({ call: 'subscribe', events: ['ChangePrimaryPlayer', 'LogLine'] }))
+    ws?.send(
+      JSON.stringify({
+        call: 'subscribe',
+        events: ['ChangePrimaryPlayer', 'LogLine', 'PartyChanged'],
+      })
+    )
 
     console.log('[Tōki] WebSocket connected')
   })
@@ -25,15 +30,30 @@ function connect() {
     try {
       const data = JSON.parse(event.data)
 
+      // 2 Change Primary Player
       if (data.type === 'ChangePrimaryPlayer') {
         playerId = Number(data.charID).toString(16).toUpperCase().padStart(8, '0')
-        console.log('[Tōki] Primary player ID set to', playerId)
+        // console.log('[Tōki] Primary player ID set to', playerId)
         return
       }
 
-      // Opcode 21 = Ability used
+      // 11 PartyList
+      if (data.type === 'PartyChanged') {
+        // console.log('[Tōki] Party Changed', data)
+
+        postMessage({
+          type: 'LevelChanged',
+          payload: {
+            level: data.party[0].level,
+          },
+        })
+
+        return
+      }
+
+      // 21 | 22 Ability used
       if (data.type === 'LogLine' && ['21', '22'].includes(data.line[0])) {
-        const [opcode, timestamp, sourceId, sourceName, abilityId, abilityName] = data.line
+        const [, timestamp, sourceId, sourceName, abilityId, abilityName] = data.line
 
         // Only continue if it's us
         if (sourceId.toUpperCase() !== playerId) return
@@ -50,7 +70,7 @@ function connect() {
       }
 
       if (data.type === 'LogLine' && data.line[0] === '260') {
-        const [opcode, timestamp, inACTCombat, inGameCombat] = data.line
+        const [, , inACTCombat, inGameCombat] = data.line
 
         postMessage({
           type: 'CombatState',

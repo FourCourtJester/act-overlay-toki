@@ -1,6 +1,7 @@
 // Import components
 import { useEffect, useState } from 'react'
 import { useAtomInstance, useAtomSelector } from '@zedux/react'
+import classNames from 'classnames'
 
 // Import our components
 import { activeCooldownsSelector, overlayAtom } from '../atoms/overlay'
@@ -39,7 +40,6 @@ export const Timeline = () => {
           height: '2vh',
         }}
       />
-
       {Object.values(cds).map(
         (cd) => !Number.isNaN(cd.recast) && <Icon key={cd.id} cd={cd} now={now} atom={overlay} />
       )}

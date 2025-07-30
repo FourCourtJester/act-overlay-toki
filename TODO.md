@@ -1,0 +1,6 @@
+- Optimize and clean up code
+- Create typescript definitions
+- Rework abilities that have charges
+- Create a nonexistent abilities database
+  - Update when xivapi 404
+- Figure out some kind of ... visuals
