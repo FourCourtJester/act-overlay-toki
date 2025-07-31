@@ -40,7 +40,9 @@ const abilitiesAtom = atom('abilities', () => {
           // If all charges removed, remove the ability
           // If not, reset the countdown
           if (ability.charges <= 0) next.splice(abilityNdex, 1)
-          else ability.timestamp = Date.now() - Number(import.meta.env.VITE_ICON_TTL) * 1000
+          else ability.timestamp = Date.now() - Number(import.meta.env.VITE_ICON_SECONDS_TTL) * 1000
+
+          console.log('[next]', next)
 
           return next
         })
@@ -70,10 +72,8 @@ const abilitiesAtom = atom('abilities', () => {
           // Character Level + Adjustments
           // Adjustments include recast and maxCharges
           if (Object.prototype.hasOwnProperty.call(Traits, xivAbility.name)) {
-            const { id, level } = character.getState()
+            const { level } = character.getState()
             const trait: Trait = Traits[xivAbility.name as keyof typeof Traits]
-
-            console.log(id, level)
 
             if (level >= trait.level) {
               Object.entries(trait.modification).forEach(([key, val]) => {

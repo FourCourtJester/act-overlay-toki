@@ -24,10 +24,7 @@ export default function Toki() {
   const [isLocked, setLocked] = useState(true)
 
   useEffect(() => {
-    const handler = (e: CustomEvent<{ isLocked: boolean }>) => {
-      console.log(e.detail.isLocked)
-      setLocked(e.detail.isLocked)
-    }
+    const handler = (e: CustomEvent<{ isLocked: boolean }>) => setLocked(e.detail.isLocked)
 
     document.addEventListener('onOverlayStateUpdate', handler as EventListener)
 

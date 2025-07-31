@@ -8,7 +8,7 @@ import abilitiesAtom from '@atoms/abilities'
 // Import interfaces
 import type { IconProps } from '@types'
 
-const defaultShift = [0, 0, 53, 0, -53]
+const defaultShift = [0, 0, 56, 0, -56]
 
 export default function Icon({ ability, now }: IconProps) {
   // Atoms
