@@ -1,26 +1,38 @@
 {
   "Swiftcast": {
     "level": 94,
-    "modification": 20
+    "modification": {
+      "recast": -20
+    }
   },
   "Manafont": {
     "level": 84,
-    "modification": 20
+    "modification": {
+      "recast": -20
+    }
   },
   "Deployment Tactics": {
     "level": 88,
-    "modification": 30
+    "modification": {
+      "recast": -30
+    }
   },
   "Recitation": {
     "level": 98,
-    "modification": 30
+    "modification": {
+      "recast": -30
+    }
   },
   "Soteria": {
     "level": 94,
-    "modification": 30
+    "modification": {
+      "recast": -30
+    }
   },
   "Zoe": {
     "level": 88,
-    "modification": 30
+    "modification": {
+      "recast": -30
+    }
   }
 }

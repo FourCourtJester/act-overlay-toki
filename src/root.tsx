@@ -3,7 +3,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
 // Import our components
-import App from './App.tsx'
+import Toki from '@components/Toki.tsx'
 
 // Import interfaces
 // ...
@@ -13,6 +13,6 @@ import './tailwind/base.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <Toki />
   </StrictMode>
 )

@@ -1,0 +1,153 @@
+// Import interfaces
+import type { LogLevel } from '@types'
+
+const BASE_RETRY_DELAY = 1000 // start at 1s
+const MAX_RETRY_DELAY = 32_000 // max 32s
+const MSG_PREFIX = '[Tōki]'
+
+export default class ACTSocket {
+  #playerID?: string
+  #retries = 0
+  #t?: NodeJS.Timeout
+  #ws?: WebSocket
+
+  constructor() {
+    this.#connect()
+  }
+
+  // PRIVATE FUNCTIONS
+
+  // Connect function
+  #connect() {
+    if (this.#ws) this.#ws.close()
+
+    this.#ws = new WebSocket('ws://127.0.0.1:10501/ws')
+
+    this.#ws.addEventListener('open', () => {
+      this.#retries = 0
+
+      // Subscribe to ACTWS Event Types
+      // LogLine - get player actions
+      // PartyChanged - get player id/level
+      this.#ws?.send(
+        JSON.stringify({
+          call: 'subscribe',
+          events: ['LogLine', 'PartyChanged'],
+        })
+      )
+
+      this.#log('log', 'WebSocket connected')
+    })
+
+    this.#ws.addEventListener('message', this.#parse.bind(this))
+
+    this.#ws.addEventListener('close', () => {
+      this.#log('warn', 'WebSocket closed')
+      this.#reconnect()
+    })
+
+    this.#ws.addEventListener('error', (err) => {
+      this.#log('error', 'WebSocket error:', err)
+      this.#ws?.close()
+    })
+  }
+
+  // Logging function
+  #log(level: LogLevel, ...params: any[]) {
+    console?.[level](MSG_PREFIX, ...params)
+  }
+
+  // Message Parsing function
+  #parse(e: MessageEvent) {
+    try {
+      const data = JSON.parse(e.data)
+
+      switch (data.type) {
+        case 'PartyChanged': {
+          const you = data.party[0]
+          const { id, level } = you
+
+          this.#playerID = id
+
+          postMessage({
+            type: data.type,
+            payload: {
+              id, // : Number(id).toString(16).toUpperCase().padStart(8, '0'),
+              level,
+            },
+          })
+          break
+        }
+
+        case 'LogLine': {
+          const code = Number(data.line[0])
+
+          switch (code) {
+            // NetworkAbility
+            // NetworkAOEAbility
+            case 21:
+            case 22: {
+              // Break down the line
+              const [, timestamp, sourceID, , abilityID, abilityName] = data.line
+
+              // Ignore everyone else's casts
+              if (sourceID.toUpperCase() !== this.#playerID) break
+
+              postMessage({
+                type: 'AbilityUsed',
+                payload: {
+                  timestamp: new Date(timestamp).getTime(),
+                  abilityID: parseInt(abilityID, 16),
+                  abilityName,
+                },
+              })
+
+              break
+            }
+
+            // InCombat
+            case 260: {
+              break
+            }
+
+            // Every other LogLine
+            default: {
+              break
+            }
+          }
+
+          break
+        }
+
+        default: {
+          break
+        }
+      }
+    } catch (err) {
+      this.#log('warn', 'Parse error:', e.data)
+      this.#log('error', err)
+    }
+  }
+
+  // Reconnect function
+  // Attempts reconnects on an exponential cliff
+  // capped at 32s
+  #reconnect() {
+    if (this.#t) return false
+
+    const delay = Math.min(BASE_RETRY_DELAY * 2 ** this.#retries, MAX_RETRY_DELAY)
+    this.#log('log', `Reconnecting in ${delay / 1000}s...`)
+
+    this.#t = setTimeout(() => {
+      this.#retries++
+
+      clearTimeout(this.#t)
+      this.#t = undefined
+
+      this.#connect()
+    }, delay)
+  }
+
+  // PUBLIC FUNCTIONS
+  // ...
+}

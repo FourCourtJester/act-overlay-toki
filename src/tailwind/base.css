@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Globals */
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -28,9 +30,27 @@ body,
   overflow: hidden;
 }
 
+/* Utility */
+
 .shadow-text {
   text-shadow:
     0 0 2px #000,
     0 1px 2px #000,
     0 0 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Components */
+
+#timeline {
+  #line {
+    height: 2vh;
+  }
+
+  .icon {
+    height: 48%;
+
+    span {
+      font-size: 25vh;
+    }
+  }
 }

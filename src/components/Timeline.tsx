@@ -1,47 +1,51 @@
 // Import components
 import { useEffect, useState } from 'react'
-import { useAtomInstance, useAtomSelector } from '@zedux/react'
-import classNames from 'classnames'
+import { useAtomContext, useAtomValue } from '@zedux/react'
 
 // Import our components
-import { activeCooldownsSelector, overlayAtom } from '../atoms/overlay'
-import { Icon } from './Icon'
+import abilitiesAtom from '@atoms/abilities'
+import Icon from '@components/Icon'
 
 // Import interfaces
 // ...
 
-export const Timeline = () => {
-  const overlay = useAtomInstance(overlayAtom)
-
-  const cds = useAtomSelector(activeCooldownsSelector)
-
+export default function Timeline() {
+  // Atoms
+  const abilitiesInstance = useAtomContext(abilitiesAtom, true)
+  const abilities = useAtomValue(abilitiesInstance).abilities
+  // States
   const [now, setNow] = useState(Date.now())
-  const isActive = cds.length > 0
+  // Variables
+  const isActive = abilities.length > 0
 
+  // As long as there are cooldowns, set a RAF loop
+  // that will update the Date and trigger re-renders
+  // of the icons
   useEffect(() => {
     if (!isActive) return () => {}
 
-    let raf: number
-    const loop = () => {
+    function loop() {
       setNow(Date.now())
       raf = requestAnimationFrame(loop)
     }
-    raf = requestAnimationFrame(loop)
+
+    let raf = requestAnimationFrame(loop)
+
     return () => cancelAnimationFrame(raf)
   }, [isActive])
 
+  // If there are no cooldowns, do not display
   if (!isActive) return null
 
   return (
-    <div className="inset-0 relative w-full h-full flex items-center">
+    <div id="timeline" className="inset-0 relative w-full h-full flex items-center">
       <div
+        id="line"
         className="absolute top-1/2 left-0 w-full bg-white/60 -translate-y-1/2 rounded-full pointer-events-none"
-        style={{
-          height: '2vh',
-        }}
       />
-      {Object.values(cds).map(
-        (cd) => !Number.isNaN(cd.recast) && <Icon key={cd.id} cd={cd} now={now} atom={overlay} />
+      {Object.values(abilities).map(
+        (ability) =>
+          !Number.isNaN(ability.recast) && <Icon key={ability.id} ability={ability} now={now} />
       )}
     </div>
   )
