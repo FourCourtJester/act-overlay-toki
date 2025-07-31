@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Animations */
+
+@keyframes toki-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 calc(1.5 * var(--toki-glow-strength)) calc(0.5 * var(--toki-glow-strength))
+      var(--toki-glow-color);
+  }
+  50% {
+    box-shadow: 0 0 calc(3 * var(--toki-glow-strength)) calc(1.5 * var(--toki-glow-strength))
+      var(--toki-glow-color);
+  }
+}
+
 /* Globals */
 
 :root {
@@ -17,6 +31,9 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --toki-glow-strength: 1vh;
+  --toki-glow-color: rgba(128, 128, 128, 0.6);
 }
 
 html,
@@ -32,6 +49,13 @@ body,
 
 /* Utility */
 
+.persistent-glow {
+  animation: toki-glow 2s ease-in-out infinite;
+  transition:
+    box-shadow 0.3s ease,
+    filter 0.3s ease;
+}
+
 .shadow-text {
   text-shadow:
     0 0 2px #000,
@@ -41,16 +65,15 @@ body,
 
 /* Components */
 
-#timeline {
-  #line {
-    height: 2vh;
-  }
+#timeline #line {
+  height: 2vh;
+  min-height: 1px;
+}
 
-  .icon {
-    height: 48%;
+#timeline .icon {
+  height: 48%;
 
-    span {
-      font-size: 25vh;
-    }
+  span {
+    font-size: 25vh;
   }
 }

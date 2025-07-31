@@ -1,5 +1,5 @@
 // Import interfaces
-import type { LogLevel } from '@types'
+import type { LogLevel, PartyChangedParty } from '@types'
 
 const BASE_RETRY_DELAY = 1000 // start at 1s
 const MAX_RETRY_DELAY = 32_000 // max 32s
@@ -32,7 +32,7 @@ export default class ACTSocket {
       this.#ws?.send(
         JSON.stringify({
           call: 'subscribe',
-          events: ['LogLine', 'PartyChanged'],
+          events: ['ChangePrimaryPlayer', 'LogLine', 'PartyChanged'],
         })
       )
 
@@ -63,17 +63,28 @@ export default class ACTSocket {
       const data = JSON.parse(e.data)
 
       switch (data.type) {
-        case 'PartyChanged': {
-          const you = data.party[0]
-          const { id, level } = you
+        case 'ChangePrimaryPlayer': {
+          const id = Number(data.charID).toString(16).toUpperCase().padStart(8, '0')
 
           this.#playerID = id
 
           postMessage({
+            type: 'PartyChanged',
+            payload: {
+              id,
+            },
+          })
+          break
+        }
+
+        case 'PartyChanged': {
+          const party: PartyChangedParty[] = data.party
+          const you = party.find((member) => member.id === this.#playerID)
+
+          postMessage({
             type: data.type,
             payload: {
-              id, // : Number(id).toString(16).toUpperCase().padStart(8, '0'),
-              level,
+              level: you?.level ?? 0,
             },
           })
           break

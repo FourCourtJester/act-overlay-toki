@@ -23,10 +23,7 @@ export interface AbilityUsedPayload {
   timestamp: string
 }
 
-export interface AbilitiesStore {
-  abilities: Ability[]
-  i: number
-}
+export type AbilitiesStore = Ability[]
 
 export interface CharacterStore {
   id?: string
@@ -35,7 +32,7 @@ export interface CharacterStore {
 
 export interface CharacterPayload {
   id: string
-  level: number
+  level?: number
 }
 
 export interface GameVersion {
@@ -49,6 +46,11 @@ export interface IconProps {
 }
 
 export type LogLevel = 'debug' | 'error' | 'log' | 'warn'
+
+export interface PartyChangedParty {
+  id: string
+  level: number
+}
 
 export interface Trait {
   level: number

@@ -21,10 +21,13 @@ export default function Toki() {
   const characterInstance = useAtomInstance(characterAtom)
   const xivapiInstance = useAtomInstance(xivAPIAtom)
   // States
-  const [isLocked, setLocked] = useState(false)
+  const [isLocked, setLocked] = useState(true)
 
   useEffect(() => {
-    const handler = (e: CustomEvent<{ isLocked: boolean }>) => setLocked(e.detail.isLocked)
+    const handler = (e: CustomEvent<{ isLocked: boolean }>) => {
+      console.log(e.detail.isLocked)
+      setLocked(e.detail.isLocked)
+    }
 
     document.addEventListener('onOverlayStateUpdate', handler as EventListener)
 
@@ -37,7 +40,7 @@ export default function Toki() {
     <AtomProvider instances={[abilitiesInstance, characterInstance, xivapiInstance]}>
       <div
         className={classNames(
-          'flex items-center justify-center w-full h-full',
+          'box-border flex items-center justify-center w-full h-full p-[3vh]',
           !isLocked ? 'bg-black/50' : false
         )}
       >

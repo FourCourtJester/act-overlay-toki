@@ -12,7 +12,7 @@ import Icon from '@components/Icon'
 export default function Timeline() {
   // Atoms
   const abilitiesInstance = useAtomContext(abilitiesAtom, true)
-  const abilities = useAtomValue(abilitiesInstance).abilities
+  const abilities = useAtomValue(abilitiesInstance)
   // States
   const [now, setNow] = useState(Date.now())
   // Variables
@@ -38,7 +38,7 @@ export default function Timeline() {
   if (!isActive) return null
 
   return (
-    <div id="timeline" className="inset-0 relative w-full h-full flex items-center">
+    <div id="timeline" className="box-border inset-0 relative w-full h-full flex items-center">
       <div
         id="line"
         className="absolute top-1/2 left-0 w-full bg-white/60 -translate-y-1/2 rounded-full pointer-events-none"

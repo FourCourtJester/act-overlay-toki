@@ -18,10 +18,7 @@ import Traits from '../traits.json'
 import type { Store } from '@zedux/react'
 import type { AbilitiesStore, AbilityRemovePayload, AbilityUpdatePayload, Trait } from '@types'
 
-const INITIAL_STATE = {
-  abilities: [],
-  i: 0,
-} as AbilitiesStore
+const INITIAL_STATE: AbilitiesStore = []
 
 // The actual Atom
 const abilitiesAtom = atom('abilities', () => {
@@ -33,29 +30,29 @@ const abilitiesAtom = atom('abilities', () => {
     createStore(
       createReducer(INITIAL_STATE)
         .reduce(actionFactory<AbilityRemovePayload>('AbilityRemove'), (state, payload) => {
-          const next = { ...state, abilities: [...state.abilities] }
-          const abilityNdex = next.abilities.findIndex((a) => a.id === payload.id)
-          const ability = next.abilities[abilityNdex]
+          const next = [...state]
+          const abilityNdex = next.findIndex((a) => a.id === payload.id)
+          const ability = next[abilityNdex]
 
           // Remove a charge
           ability.charges--
 
           // If all charges removed, remove the ability
           // If not, reset the countdown
-          if (ability.charges <= 0) next.abilities.splice(abilityNdex, 1)
+          if (ability.charges <= 0) next.splice(abilityNdex, 1)
           else ability.timestamp = Date.now() - Number(import.meta.env.VITE_ICON_TTL) * 1000
 
           return next
         })
         .reduce(actionFactory<AbilityUpdatePayload>('AbilityUpdate'), (state, payload) => {
           const { xivAbility } = payload
-          const next = { ...state, abilities: [...state.abilities] }
+          const next = [...state]
 
           // Ignore invalid abilities
           if (xivAbility.category === -1) return next
 
-          const abilityNdex = state.abilities.findIndex((a) => a.id === xivAbility.id)
-          const ability = state.abilities[abilityNdex] ?? undefined
+          const abilityNdex = state.findIndex((a) => a.id === xivAbility.id)
+          const ability = state[abilityNdex] ?? undefined
 
           // Ignore abilities outside of the threshold
           if (xivAbility.recast <= Number(import.meta.env.VITE_ABILITY_RECAST_THRESHOLD))
@@ -63,7 +60,7 @@ const abilitiesAtom = atom('abilities', () => {
 
           // Update charges
           if (ability && xivAbility.maxCharges > 1) {
-            next.abilities[abilityNdex].charges++
+            next[abilityNdex].charges++
             return next
           }
 
@@ -73,8 +70,10 @@ const abilitiesAtom = atom('abilities', () => {
           // Character Level + Adjustments
           // Adjustments include recast and maxCharges
           if (Object.prototype.hasOwnProperty.call(Traits, xivAbility.name)) {
-            const { level } = character.getState()
+            const { id, level } = character.getState()
             const trait: Trait = Traits[xivAbility.name as keyof typeof Traits]
+
+            console.log(id, level)
 
             if (level >= trait.level) {
               Object.entries(trait.modification).forEach(([key, val]) => {
@@ -84,14 +83,14 @@ const abilitiesAtom = atom('abilities', () => {
           }
 
           // Add the ability cooldown
-          next.abilities.push(newAbility)
+          next.push(newAbility)
 
           return next
         })
     )
   )
 
-  return api(store).setExports({})
+  return api(store)
 })
 
 export default abilitiesAtom
