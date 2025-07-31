@@ -30,6 +30,13 @@ Before using Tōki, ensure you have:
 
 ## 📦 Usage Instructions (for Players)
 
+1. **Install ACT and OverlayPlugin** You can get started with the [ACT Setup Guide](https://github.com/FFXIV-ACT/setup-guide)
+2. Add a `MiniParse` overlay named `Toki` by using the `Preset` of Custom
+    * Add the Pages URL: `https://fourcourtjester.github.io/act-overlay-toki/`
+
+### Note
+The Default Websocket URL is `ws://127.0.0.1:10501/ws`. If you're using a custom websocket port, add `?WS=<custom ws url>` to the above URL
+
 ## 📦 Installation Instructions (for Devs)
 
 1. **Clone or download this repository**

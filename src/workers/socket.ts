@@ -1,3 +1,9 @@
+// Import components
+// ...
+
+// Import our components
+// ...
+
 // Import interfaces
 import type { LogLevel, PartyChangedParty } from '@types'
 
@@ -10,9 +16,22 @@ export default class ACTSocket {
   #retries = 0
   #t?: NodeJS.Timeout
   #ws?: WebSocket
+  #wsURL?: string
 
   constructor() {
-    this.#connect()
+    self.addEventListener('message', (e) => {
+      switch (e.data.type) {
+        case 'connect': {
+          this.#wsURL = e.data.url
+          this.#connect()
+          break
+        }
+
+        default: {
+          break
+        }
+      }
+    })
   }
 
   // PRIVATE FUNCTIONS
@@ -20,8 +39,12 @@ export default class ACTSocket {
   // Connect function
   #connect() {
     if (this.#ws) this.#ws.close()
+    if (!this.#wsURL) {
+      this.#ws?.close()
+      this.#reconnect()
+    }
 
-    this.#ws = new WebSocket('ws://127.0.0.1:10501/ws')
+    this.#ws = new WebSocket(this.#wsURL!)
 
     this.#ws.addEventListener('open', () => {
       this.#retries = 0
