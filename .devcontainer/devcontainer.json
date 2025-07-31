@@ -17,7 +17,7 @@
   "forwardPorts": [
     5173
   ],
-  "name": "Toki Dev",
-  "postCreateCommand": "npm install",
-  "remoteUser": "vscode"
+  "name": "Tōki Dev",
+  "postCreateCommand": "npm ci",
+  "remoteUser": "node",
 }

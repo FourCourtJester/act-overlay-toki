@@ -1,7 +1,6 @@
 // Import components
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useAtomContext } from '@zedux/react'
-import classNames from 'classnames'
 
 // Import our components
 import abilitiesAtom from '@atoms/abilities'
