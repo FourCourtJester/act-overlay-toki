@@ -42,8 +42,6 @@ const abilitiesAtom = atom('abilities', () => {
           if (ability.charges <= 0) next.splice(abilityNdex, 1)
           else ability.timestamp = Date.now() - Number(import.meta.env.VITE_ICON_SECONDS_TTL) * 1000
 
-          console.log('[next]', next)
-
           return next
         })
         .reduce(actionFactory<AbilityUpdatePayload>('AbilityUpdate'), (state, payload) => {
